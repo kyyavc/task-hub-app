@@ -7,7 +7,7 @@ const columns = [
     { id: 'done', title: 'Done' }
 ];
 
-export default function TaskBoard({ tasks }) {
+export default function TaskBoard({ tasks, onTaskUpdate, onEditTask }) {
     const getTasksByStatus = (status) => {
         return tasks.filter(task => task.status === status);
     };
@@ -28,7 +28,7 @@ export default function TaskBoard({ tasks }) {
 
                         <div className={styles.taskList}>
                             {columnTasks.map(task => (
-                                <TaskCard key={task.id} task={task} />
+                                <TaskCard key={task.id} task={task} onUpdate={onTaskUpdate} onEdit={() => onEditTask && onEditTask(task)} />
                             ))}
                         </div>
                     </div>

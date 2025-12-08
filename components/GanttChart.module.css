@@ -1,0 +1,98 @@
+.container {
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--surface-color);
+    max-height: 600px;
+}
+
+.chart {
+    display: grid;
+    /* Grid columns set inline dynamically */
+    grid-auto-rows: 50px;
+    /* Fixed height per task/header */
+    position: relative;
+    min-width: 100%;
+}
+
+.cell {
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px dotted rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.headerCell {
+    background: var(--bg-color);
+    font-weight: 600;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.dateCell {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 40px;
+}
+
+.sticky {
+    position: sticky;
+    left: 0;
+    background: var(--surface-color);
+    z-index: 5;
+    border-right: 2px solid var(--border-color);
+}
+
+.taskTitle {
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+}
+
+/* Bars */
+.taskBar {
+    margin: 8px 2px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    /* Important: To appear in the correct row, we might need explicit row placement or `display: contents` wrapper tricks. 
+       Re-visiting component logic to ensuring row alignment. 
+    */
+}
+
+.status_todo {
+    background: #94a3b8;
+}
+
+.status_in_progress {
+    background: #818cf8;
+}
+
+.status_done {
+    background: #4ade80;
+    color: #022c22;
+}
+
+.empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
