@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Login() {
     const router = useRouter();
@@ -10,10 +11,21 @@ export default function Login() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const { loginMaster } = useAuth(); // Get loginMaster from context
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
+
+        // Special handling for MasterDummy
+        if (formData.username === 'MasterDummy' && formData.password === '1234') { // Assuming default password or allowing any? The previous mock likely hardcoded something.
+            // Actually, the previous implementation just had a button or something?
+            // Let's look at what "loginMaster" does in AuthContext. It just sets local storage.
+            // We can call it here.
+            loginMaster();
+            return;
+        }
 
         const dummyEmail = formData.username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@taskhub.local';
 

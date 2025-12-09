@@ -39,6 +39,23 @@ export default function MyTasks() {
         }
     }
 
+    useEffect(() => {
+        const channel = supabase
+            .channel('tasks_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, (payload) => {
+                console.log('Realtime change received:', payload);
+                // Simple strategy: Refetch to ensure relation data (profiles) is also accurate
+                // Optimization: Handle individual events (INSERT/UPDATE/DELETE) and patch state manually if needed.
+                // For simplicity and correctness with relations, refetching is safest for MVP.
+                fetchTasks();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
     const [editingTask, setEditingTask] = useState(null);
 
     const handleTaskCreated = (newTask) => {

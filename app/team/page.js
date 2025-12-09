@@ -26,6 +26,17 @@ export default function Team() {
 
     useEffect(() => {
         fetchMembers();
+
+        const channel = supabase
+            .channel('team_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+                fetchMembers();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
     const handleDelete = async (id) => {
         if (!confirm('Are you sure you want to remove this member?')) return;
