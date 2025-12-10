@@ -21,8 +21,7 @@ export default function TaskCard({ task, onUpdate, onEdit }) {
                     onChange={async (e) => {
                         const newStatus = e.target.value;
                         const updates = {
-                            status: newStatus,
-                            completed_at: newStatus === 'done' ? new Date().toISOString() : null
+                            status: newStatus
                         };
                         const { error } = await supabase
                             .from('tasks')

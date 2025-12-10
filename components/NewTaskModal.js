@@ -48,8 +48,7 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
             status: formData.status,
             assignee_id: formData.assignee_id || null,
             start_date: formData.start_date || null,
-            due_date: formData.due_date || null,
-            completed_at: formData.status === 'done' ? (formData.completed_at || new Date().toISOString()) : null
+            due_date: formData.due_date || null
         };
         console.log('Creating Task with Payload:', payload);
 
@@ -154,8 +153,7 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
                                 const newStatus = e.target.value;
                                 setFormData({
                                     ...formData,
-                                    status: newStatus,
-                                    completed_at: newStatus === 'done' ? new Date().toISOString() : null
+                                    status: newStatus
                                 });
                             }}
                         >
