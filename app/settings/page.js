@@ -126,9 +126,10 @@ export default function Settings() {
                                         setLoading(true);
                                         const { error } = await supabase.from('profiles').update({ settings: profile.settings }).eq('id', user.id);
                                         if (error) {
-                                            alert('Error saving settings: ' + error.message);
+                                            setStatusMessage('FAILED: ' + error.message);
                                         } else {
-                                            alert('Preferences saved!');
+                                            setStatusMessage('SUCCESS: Preferences saved!');
+                                            setTimeout(() => setStatusMessage(''), 3000);
                                         }
                                         setLoading(false);
                                     }}
@@ -167,9 +168,10 @@ export default function Settings() {
                                             const res = await fetch('/api/admin/clear-tasks', { method: 'DELETE' });
                                             const data = await res.json();
                                             if (!res.ok) throw new Error(data.error);
-                                            alert(`Cleanup complete. Removed ${data.count} old tasks.`);
+                                            setStatusMessage(`SUCCESS: Removed ${data.count} old tasks.`);
+                                            setTimeout(() => setStatusMessage(''), 3000);
                                         } catch (e) {
-                                            alert('Error: ' + e.message);
+                                            setStatusMessage('FAILED: ' + e.message);
                                         } finally {
                                             setLoading(false);
                                         }
@@ -196,9 +198,10 @@ export default function Settings() {
                                             const res = await fetch('/api/admin/clear-inactive', { method: 'DELETE' });
                                             const data = await res.json();
                                             if (!res.ok) throw new Error(data.error);
-                                            alert(`Cleanup complete. Removed ${data.count} inactive accounts.`);
+                                            setStatusMessage(`SUCCESS: Removed ${data.count} inactive accounts.`);
+                                            setTimeout(() => setStatusMessage(''), 3000);
                                         } catch (e) {
-                                            alert('Error: ' + e.message);
+                                            setStatusMessage('FAILED: ' + e.message);
                                         } finally {
                                             setLoading(false);
                                         }
@@ -295,7 +298,6 @@ export default function Settings() {
                                                             onClick={async () => {
                                                                 if (!confirm('Remove this user?')) return;
                                                                 setLoading(true);
-                                                                // Use the API to delete securely
                                                                 try {
                                                                     const res = await fetch(`/api/admin/delete-user?id=${u.id}`, { method: 'DELETE' });
                                                                     if (!res.ok) {
@@ -305,8 +307,10 @@ export default function Settings() {
                                                                     // Refresh list
                                                                     const { data } = await supabase.from('profiles').select('*').order('username', { ascending: true });
                                                                     if (data) setAllUsers(data);
+                                                                    setStatusMessage('SUCCESS: User removed');
+                                                                    setTimeout(() => setStatusMessage(''), 3000);
                                                                 } catch (err) {
-                                                                    alert('Delete failed: ' + err.message);
+                                                                    setStatusMessage('FAILED: ' + err.message);
                                                                 }
                                                                 setLoading(false);
                                                             }}
