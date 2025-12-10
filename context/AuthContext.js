@@ -70,6 +70,10 @@ export function AuthProvider({ children }) {
         const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
             if (!mounted) return;
 
+            // PROTECT MASTER SESSION: If we are in "Master Mode", ignore all auth events.
+            // This prevents the app from switching to the newly created user context when "Add Member" is used.
+            if (localStorage.getItem('master_session')) return;
+
             if (session?.user) {
                 const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
                 setUser({ ...session.user, ...profile });

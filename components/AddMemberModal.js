@@ -34,6 +34,10 @@ export default function AddMemberModal({ onClose, onMemberAdded }) {
                 ]);
                 if (profileError) throw profileError;
 
+                // CRITICAL: Immediately sign out the new user so we don't switch context
+                // The master_session in localStorage will keep the current user logged in as Master
+                await supabase.auth.signOut();
+
                 onMemberAdded();
                 onClose();
             }
