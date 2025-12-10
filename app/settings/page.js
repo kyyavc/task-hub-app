@@ -10,6 +10,7 @@ export default function Settings() {
     const [profile, setProfile] = useState({});
     const [allUsers, setAllUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [statusMessage, setStatusMessage] = useState('');
 
     useEffect(() => {
         async function fetchProfile() {
@@ -37,6 +38,21 @@ export default function Settings() {
                     <h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '2rem', color: 'var(--text-primary)' }}>
                         Settings
                     </h1>
+
+                    {/* Debug Status Message */}
+                    {statusMessage && (
+                        <div id="settings-status" style={{
+                            padding: '1rem',
+                            marginBottom: '2rem',
+                            borderRadius: '8px',
+                            background: statusMessage.startsWith('SUCCESS') ? '#dcfce7' : '#fee2e2',
+                            color: statusMessage.startsWith('SUCCESS') ? '#166534' : '#991b1b',
+                            fontWeight: 'bold',
+                            textAlign: 'center'
+                        }}>
+                            {statusMessage}
+                        </div>
+                    )}
 
                     {/* Profile Settings (Everyone) */}
                     {user?.id !== 'master' && (
