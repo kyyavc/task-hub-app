@@ -12,7 +12,7 @@ export default function AddMemberModal({ onClose, onMemberAdded }) {
         setLoading(true);
         setError(null);
 
-        const dummyEmail = formData.username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@taskhub.local';
+        const dummyEmail = formData.username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@taskhub.app';
 
         try {
             // Create auth user
