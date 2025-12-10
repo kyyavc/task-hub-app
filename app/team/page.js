@@ -38,8 +38,12 @@ export default function Team() {
             supabase.removeChannel(channel);
         };
     }, []);
+    const [statusMessage, setStatusMessage] = useState('');
+
     const handleDelete = async (id) => {
         if (!confirm('Are you sure you want to remove this member?')) return;
+
+        setStatusMessage('Deleting user...');
 
         try {
             const response = await fetch(`/api/admin/delete-user?id=${id}`, {
@@ -49,14 +53,16 @@ export default function Team() {
             const data = await response.json();
 
             if (!response.ok) {
-                alert('FAILED: ' + (data.error || 'Unknown error'));
+                setStatusMessage('FAILED: ' + (data.error || 'Unknown error'));
             } else {
-                alert('SUCCESS: User deleted. Refreshing list...');
+                setStatusMessage('SUCCESS: User deleted');
                 fetchMembers();
+                // Clear success message after 3s
+                setTimeout(() => setStatusMessage(''), 3000);
             }
 
         } catch (error) {
-            alert('ERROR: ' + error.message);
+            setStatusMessage('ERROR: ' + error.message);
             console.error(error);
         }
     };
@@ -81,6 +87,21 @@ export default function Team() {
                             </button>
                         )}
                     </header>
+
+                    {/* Debug Status Message */}
+                    {statusMessage && (
+                        <div id="debug-status" style={{
+                            padding: '1rem',
+                            marginBottom: '1rem',
+                            borderRadius: '8px',
+                            background: statusMessage.startsWith('SUCCESS') ? '#dcfce7' : '#fee2e2',
+                            color: statusMessage.startsWith('SUCCESS') ? '#166534' : '#991b1b',
+                            fontWeight: 'bold',
+                            textAlign: 'center'
+                        }}>
+                            {statusMessage}
+                        </div>
+                    )}
 
 
 
