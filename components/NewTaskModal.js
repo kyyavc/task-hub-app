@@ -51,6 +51,7 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
             due_date: formData.due_date || null,
             completed_at: formData.status === 'done' ? (formData.completed_at || new Date().toISOString()) : null
         };
+        console.log('Creating Task with Payload:', payload);
 
         try {
             let data, error;
