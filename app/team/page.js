@@ -41,7 +41,7 @@ export default function Team() {
     const [statusMessage, setStatusMessage] = useState('');
 
     const handleDelete = async (id) => {
-        if (!confirm('Are you sure you want to remove this member?')) return;
+        // if (!confirm('Are you sure you want to remove this member?')) return;
 
         setStatusMessage('Deleting user...');
 

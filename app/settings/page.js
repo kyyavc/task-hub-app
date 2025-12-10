@@ -331,7 +331,7 @@ export default function Settings() {
                                                     ) : (
                                                         <button
                                                             onClick={async () => {
-                                                                if (!confirm('Remove this user?')) return;
+                                                                // if (!confirm('Remove this user?')) return;
                                                                 setLoading(true);
                                                                 try {
                                                                     const res = await fetch(`/api/admin/delete-user?id=${u.id}`, { method: 'DELETE' });
