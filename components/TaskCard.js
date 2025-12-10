@@ -29,7 +29,13 @@ export default function TaskCard({ task, onUpdate, onEdit }) {
                             .update(updates)
                             .eq('id', task.id)
                             .select();
-                        if (!error && onUpdate) onUpdate();
+
+                        if (error) {
+                            console.error('Status update failed:', error);
+                            alert('Failed to update status: ' + error.message);
+                        } else {
+                            if (onUpdate) onUpdate();
+                        }
                     }}
                     style={{ border: 'none', cursor: 'pointer', appearance: 'none' }}
                 >
