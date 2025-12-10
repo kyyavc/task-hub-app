@@ -23,25 +23,41 @@ export async function DELETE(request) {
             }
         );
 
-        // Delete from Auth (users table)
-        const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(id);
+        // 1. Unassign tasks first (to avoid FK constraints on Profiles)
+        // Using service key allows bypassing RLS
+        const { error: tasksError } = await supabaseAdmin
+            .from('tasks')
+            .update({ assignee_id: null })
+            .eq('assignee_id', id);
 
-        if (authError) {
-            return NextResponse.json({ error: authError.message }, { status: 500 });
+        if (tasksError) {
+            console.error('Error unassigning tasks:', tasksError);
+            // Verify if we should proceed. Usually yes, maybe user had no tasks.
         }
 
-        // Delete from Profiles (public table) - Optional if cascading, but good for safety
-        const { error: profileError } = await supabaseAdmin.from('profiles').delete().eq('id', id);
+        // 2. Delete from Profiles (public table)
+        // This must happen before Auth delete if FK is restricted
+        const { error: profileError } = await supabaseAdmin
+            .from('profiles')
+            .delete()
+            .eq('id', id);
 
         if (profileError) {
             console.error('Error deleting profile:', profileError);
-            // We don't fail the request if auth deletion succeeded, but we log it.
+            return NextResponse.json({ error: 'Failed to delete profile: ' + profileError.message }, { status: 500 });
         }
 
-        return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });
+        // 3. Delete from Auth (users table)
+        const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(id);
+
+        if (authError) {
+            return NextResponse.json({ error: 'Failed to delete auth user: ' + authError.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ message: 'User and associated data cleared successfully' }, { status: 200 });
 
     } catch (error) {
         console.error('Delete user error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error: ' + error.message }, { status: 500 });
     }
 }
