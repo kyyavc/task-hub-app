@@ -53,16 +53,20 @@ export default function Team() {
             const data = await response.json();
 
             if (!response.ok) {
-                setStatusMessage('FAILED: ' + (data.error || 'Unknown error'));
+                const errMsg = data.error || 'Unknown error';
+                setStatusMessage(`FAILED: ${errMsg}`);
+                alert(`Failed to delete user: ${errMsg}`);
             } else {
                 setStatusMessage('SUCCESS: User deleted');
+                alert('User deleted successfully.');
                 fetchMembers();
                 // Clear success message after 3s
                 setTimeout(() => setStatusMessage(''), 3000);
             }
 
         } catch (error) {
-            setStatusMessage('ERROR: ' + error.message);
+            setStatusMessage(`ERROR: ${error.message}`);
+            alert(`Error deleting user: ${error.message}`);
             console.error(error);
         }
     };

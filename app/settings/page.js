@@ -309,10 +309,17 @@ export default function Settings() {
                                                                 onClick={async () => {
                                                                     if (!confirm('Reject and delete application?')) return;
                                                                     setLoading(true);
-                                                                    const { error } = await supabase.from('profiles').delete().eq('id', u.id);
-                                                                    if (!error) {
+                                                                    try {
+                                                                        const res = await fetch(`/api/admin/delete-user?id=${u.id}`, { method: 'DELETE' });
+                                                                        if (!res.ok) {
+                                                                            const d = await res.json();
+                                                                            throw new Error(d.error);
+                                                                        }
                                                                         const { data } = await supabase.from('profiles').select('*').order('username', { ascending: true });
                                                                         if (data) setAllUsers(data);
+                                                                        // alert('Application rejected and user removed.');
+                                                                    } catch (err) {
+                                                                        alert('Failed to reject: ' + err.message);
                                                                     }
                                                                     setLoading(false);
                                                                 }}
