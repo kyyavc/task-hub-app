@@ -27,7 +27,7 @@ export default function Login() {
             return;
         }
 
-        const dummyEmail = formData.username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@taskhub.local';
+        const dummyEmail = formData.username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@taskhub.app';
 
         try {
             const { error } = await supabase.auth.signInWithPassword({
