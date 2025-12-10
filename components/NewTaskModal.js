@@ -43,9 +43,9 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
 
         // Sanitize data: convert empty strings to null for dates and assignee
         const payload = {
-            ...formData,
-            assignee_id: formData.assignee_id || null,
-            start_date: formData.start_date || null,
+            title: formData.title,
+            description: formData.description,
+            status: formData.status,
             assignee_id: formData.assignee_id || null,
             start_date: formData.start_date || null,
             due_date: formData.due_date || null,
