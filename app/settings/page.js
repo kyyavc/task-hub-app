@@ -148,15 +148,10 @@ export default function Settings() {
                                         if (!confirm('Remove tasks completed more than 24 hours ago?')) return;
                                         setLoading(true);
                                         try {
-                                            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-                                            const { data, error } = await supabase
-                                                .from('tasks')
-                                                .delete()
-                                                .eq('status', 'done')
-                                                .lt('completed_at', oneDayAgo);
-
-                                            if (error) throw error;
-                                            alert(`Cleanup complete. Removed ${data ? data.length : 0} old tasks.`);
+                                            const res = await fetch('/api/admin/clear-tasks', { method: 'DELETE' });
+                                            const data = await res.json();
+                                            if (!res.ok) throw new Error(data.error);
+                                            alert(`Cleanup complete. Removed ${data.count} old tasks.`);
                                         } catch (e) {
                                             alert('Error: ' + e.message);
                                         } finally {
@@ -182,8 +177,9 @@ export default function Settings() {
                                         if (!confirm('Remove all inactive (zombie) accounts?')) return;
                                         setLoading(true);
                                         try {
-                                            const { data, error } = await supabase.auth.admin.deleteInactiveUsers();
-                                            if (error) throw error;
+                                            const res = await fetch('/api/admin/clear-inactive', { method: 'DELETE' });
+                                            const data = await res.json();
+                                            if (!res.ok) throw new Error(data.error);
                                             alert(`Cleanup complete. Removed ${data.count} inactive accounts.`);
                                         } catch (e) {
                                             alert('Error: ' + e.message);
@@ -283,10 +279,18 @@ export default function Settings() {
                                                             onClick={async () => {
                                                                 if (!confirm('Remove this user?')) return;
                                                                 setLoading(true);
-                                                                const { error } = await supabase.from('profiles').delete().eq('id', u.id);
-                                                                if (!error) {
+                                                                // Use the API to delete securely
+                                                                try {
+                                                                    const res = await fetch(`/api/admin/delete-user?id=${u.id}`, { method: 'DELETE' });
+                                                                    if (!res.ok) {
+                                                                        const d = await res.json();
+                                                                        throw new Error(d.error);
+                                                                    }
+                                                                    // Refresh list
                                                                     const { data } = await supabase.from('profiles').select('*').order('username', { ascending: true });
                                                                     if (data) setAllUsers(data);
+                                                                } catch (err) {
+                                                                    alert('Delete failed: ' + err.message);
                                                                 }
                                                                 setLoading(false);
                                                             }}
