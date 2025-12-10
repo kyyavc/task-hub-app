@@ -13,9 +13,7 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           {children}
-          <footer style={{ padding: '1rem', textAlign: 'center', fontSize: '0.8rem', color: '#666' }}>
-            v1.3-Debug-NoConfirm
-          </footer>
+
         </AuthProvider>
       </body>
     </html>
