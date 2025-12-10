@@ -46,16 +46,17 @@ export default function Team() {
                 method: 'DELETE',
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to delete user');
+                alert('FAILED: ' + (data.error || 'Unknown error'));
+            } else {
+                alert('SUCCESS: User deleted. Refreshing list...');
+                fetchMembers();
             }
 
-            // Refresh list on success
-            fetchMembers();
-
         } catch (error) {
-            alert('Error removing member: ' + error.message);
+            alert('ERROR: ' + error.message);
             console.error(error);
         }
     };
