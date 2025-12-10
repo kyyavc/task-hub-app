@@ -41,21 +41,22 @@ export default function Team() {
     const handleDelete = async (id) => {
         if (!confirm('Are you sure you want to remove this member?')) return;
 
-        // Delete from auth (users) AND profiles
-        // We delete auth first, usually the harder part
-        const { error: authError } = await supabase.auth.admin.deleteUser(id);
+        try {
+            const response = await fetch(`/api/admin/delete-user?id=${id}`, {
+                method: 'DELETE',
+            });
 
-        if (authError) {
-            alert('Error removing user account: ' + authError.message);
-            return;
-        }
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to delete user');
+            }
 
-        // Then delete profile (though real supabase might cascade, we do explicit)
-        const { error } = await supabase.from('profiles').delete().eq('id', id);
-        if (error) {
-            alert('Error removing member profile: ' + error.message);
-        } else {
+            // Refresh list on success
             fetchMembers();
+
+        } catch (error) {
+            alert('Error removing member: ' + error.message);
+            console.error(error);
         }
     };
 
