@@ -230,8 +230,25 @@ export default function Settings() {
                                             setLoading(false);
                                         }}
                                         style={{
+                                            padding: '0.5rem 1rem', background: '#3b82f6', color: 'white', border: 'none',
+                                            borderRadius: 'var(--radius-md)', cursor: 'pointer', fontSize: '0.86rem'
+                                        }}
+                                    >
+                                        Test Server Config
+                                    </button>
+                                </div>
+                            </div>
+                    )}
 
-                                    < div style={{ overflowX: 'auto' }}>
+                            {/* Admin Section: Access Control */}
+                            {isAdmin && (
+                                <div style={{ maxWidth: '800px', background: 'var(--surface-color)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--primary-color)' }}>
+                                    <div style={{ marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
+                                        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-primary)' }}>Admin: Access Control</h2>
+                                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Manage user roles and permissions.</p>
+                                    </div>
+
+                                    <div style={{ overflowX: 'auto' }}>
                                         <table style={{ width: '100%', borderCollapse: 'collapse', color: 'var(--text-primary)' }}>
                                             <thead>
                                                 <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
@@ -330,8 +347,8 @@ export default function Settings() {
                                                 ))}
                                             </tbody>
                                         </table>
+                                    </div>
                                 </div>
-                            </div>
                             )}
 
                         </main>
