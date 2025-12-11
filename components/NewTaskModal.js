@@ -85,16 +85,21 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
     };
 
     const handleDelete = async () => {
-        if (!confirm('Are you sure you want to delete this task?')) return;
+        // if (!confirm('Are you sure you want to delete this task?')) return; // Debug: Removed confirm
+        console.log('Attempting DELETE for task:', task.id);
         setLoading(true);
         try {
-            const { error } = await supabase.from('tasks').delete().eq('id', task.id);
+            const { error, count } = await supabase.from('tasks').delete({ count: 'exact' }).eq('id', task.id);
+            console.log('Delete Result:', { error, count });
+
             if (error) throw error;
+            if (count === 0) throw new Error('RLS Blocked Delete (0 rows deleted)');
+
             if (onTaskDeleted) onTaskDeleted(task.id);
             onClose();
         } catch (error) {
             console.error('Error deleting task:', error);
-            alert('Failed to delete task');
+            alert('Failed to delete task: ' + (error.message || 'Unknown error'));
         } finally {
             setLoading(false);
         }
