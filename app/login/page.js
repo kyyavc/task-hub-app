@@ -19,11 +19,24 @@ export default function Login() {
         setLoading(true);
 
         // Special handling for MasterDummy
-        if (formData.username === 'MasterDummy' && formData.password === '1234') { // Assuming default password or allowing any? The previous mock likely hardcoded something.
-            // Actually, the previous implementation just had a button or something?
-            // Let's look at what "loginMaster" does in AuthContext. It just sets local storage.
-            // We can call it here.
-            loginMaster();
+        // Special handling for MasterDummy - Upgrade to Real Auth
+        if (formData.username === 'MasterDummy' && formData.password === '1234') {
+            try {
+                const { error } = await supabase.auth.signInWithPassword({
+                    email: 'master@taskhub.app',
+                    password: 'master1234'
+                });
+
+                if (error) {
+                    console.error('Master login failed:', error);
+                    setError('Master account upgrade failed. Please check console.');
+                } else {
+                    loginMaster(); // Preserves legacy context state if needed
+                    router.push('/');
+                }
+            } catch (err) {
+                setError('Master login error.');
+            }
             return;
         }
 
