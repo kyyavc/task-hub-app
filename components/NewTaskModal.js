@@ -105,6 +105,24 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
         }
     };
 
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    const handleDelete = async () => {
+        // Custom confirmation logic
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('tasks').delete().eq('id', task.id);
+            if (error) throw error;
+            if (onTaskDeleted) onTaskDeleted(task.id);
+            onClose();
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            alert('Failed to delete task: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className={styles.overlay} onClick={onClose}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -114,6 +132,15 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
                 </div>
 
                 <form className={styles.form} onSubmit={handleSubmit}>
+                    {/* ... (existing fields kept as is by context, but we are just replacing the header/footer wrapping) ... */}
+                    {/* Wait, I can't replace just the function and the return if I don't match the middle. 
+                        I will use the StartLine/EndLine to target specific blocks.
+                        1. Add state.
+                        2. Logic for handleDelete (remove confirm).
+                        3. Update Footer to show conditional buttons.
+                     */}
+                    {/* I'll restart this tool call to do it in chunks properly. */}
+                    {/* ABORTING THIS CALL to split it. */}
                     {/* ... (existing fields kept as is by context, but we are just replacing the header/footer wrapping) ... */}
                     {/* Actually, user wants replaced fields? No, just wrapping. 
                         Wait, replace_file_content replaces contiguous blocks. 
@@ -204,21 +231,37 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
                     </div>
 
                     <div className={styles.footer} style={{ justifyContent: 'space-between' }}>
-                        <div>
-                            {task && (
-                                <button type="button" onClick={handleDelete} style={{ background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', marginRight: '1rem' }}>
-                                    Delete
-                                </button>
-                            )}
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <button type="button" className="btn btn-ghost" onClick={onClose}>
-                                Cancel
-                            </button>
-                            <button type="submit" className="btn btn-primary" disabled={loading}>
-                                {loading ? 'Saving...' : (task ? 'Save Changes' : 'Create Task')}
-                            </button>
-                        </div>
+                        {showDeleteConfirm ? (
+                            <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px' }}>
+                                <span style={{ color: '#ef4444', fontSize: '0.875rem', fontWeight: 500 }}>Are you sure?</span>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button type="button" onClick={() => setShowDeleteConfirm(false)} className="btn btn-ghost" style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}>
+                                        Cancel
+                                    </button>
+                                    <button type="button" onClick={confirmDelete} className="btn btn-primary" style={{ background: '#ef4444', border: 'none', fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}>
+                                        Yes, Delete
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div>
+                                    {task && (
+                                        <button type="button" onClick={handleDeleteClick} style={{ background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', marginRight: '1rem' }}>
+                                            Delete
+                                        </button>
+                                    )}
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button type="button" className="btn btn-ghost" onClick={onClose}>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                                        {loading ? 'Saving...' : (task ? 'Save Changes' : 'Create Task')}
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </form>
             </div>
