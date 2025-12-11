@@ -96,11 +96,9 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
     };
 
     const confirmDelete = async () => {
-        console.log('Attempting DELETE for task:', task.id);
         setLoading(true);
         try {
             const { error, count } = await supabase.from('tasks').delete({ count: 'exact' }).eq('id', task.id);
-            console.log('Delete Result:', { error, count });
 
             if (error) throw error;
             if (count === 0) throw new Error('RLS Blocked Delete (0 rows deleted)');
