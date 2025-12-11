@@ -84,8 +84,18 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
         }
     };
 
-    const handleDelete = async () => {
-        // if (!confirm('Are you sure you want to delete this task?')) return; // Debug: Removed confirm
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    // Reset confirmation when task changes
+    useEffect(() => {
+        setShowDeleteConfirm(false);
+    }, [task]);
+
+    const handleDeleteClick = () => {
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
         console.log('Attempting DELETE for task:', task.id);
         setLoading(true);
         try {
@@ -100,24 +110,6 @@ export default function NewTaskModal({ onClose, onTaskCreated, task = null, onTa
         } catch (error) {
             console.error('Error deleting task:', error);
             alert('Failed to delete task: ' + (error.message || 'Unknown error'));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-    const handleDelete = async () => {
-        // Custom confirmation logic
-        setLoading(true);
-        try {
-            const { error } = await supabase.from('tasks').delete().eq('id', task.id);
-            if (error) throw error;
-            if (onTaskDeleted) onTaskDeleted(task.id);
-            onClose();
-        } catch (error) {
-            console.error('Error deleting task:', error);
-            alert('Failed to delete task: ' + error.message);
         } finally {
             setLoading(false);
         }
